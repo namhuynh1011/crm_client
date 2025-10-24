@@ -15,6 +15,7 @@ const FilterPanel = () => {
         <option>Tất cả nhân viên</option>
         <option>Nguyễn Văn A</option>
         <option>Trần Thị B</option>
+        <option>Lê Văn C</option>
       </select>
 
       <input type="text" placeholder="Tìm kiếm khách hàng..." />
