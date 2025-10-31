@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { FaUserAlt, FaLock, FaEnvelope } from "react-icons/fa";
 import "../../index.css";
 
 const Register = () => {
@@ -13,75 +14,104 @@ const Register = () => {
   const handleRegister = (e) => {
     e.preventDefault();
 
+    // Kiểm tra nhập thiếu
     if (!name || !email || !password || !confirmPassword) {
       setError("Vui lòng điền đầy đủ thông tin!");
       return;
     }
 
+    // Kiểm tra mật khẩu xác nhận
     if (password !== confirmPassword) {
       setError("Mật khẩu xác nhận không khớp!");
       return;
     }
 
-    // Giả lập đăng ký thành công
-    console.log("Đăng ký:", { name, email });
-    setError("");
-    navigate("/dashboard");
+    // Lấy danh sách người dùng cũ (nếu có)
+    const users = JSON.parse(localStorage.getItem("users")) || [];
+
+    // Kiểm tra trùng email
+    const userExists = users.find((u) => u.email === email);
+    if (userExists) {
+      setError("Email này đã được đăng ký!");
+      return;
+    }
+
+    // Thêm người dùng mới vào mảng
+    users.push({ name, email, password });
+    localStorage.setItem("users", JSON.stringify(users));
+
+    alert("✅ Đăng ký thành công!");
+    navigate("/login");
   };
 
   return (
-    <div className="flex items-center justify-center h-screen bg-gray-100">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
-        <h2 className="text-2xl font-bold text-center mb-4 text-blue-600">
-          CRM Register
-        </h2>
+    <div className="register-container">
+      <div className="register-card">
+        <img src="/logo192.png" alt="Logo" className="logo" />
+        <h2>Đăng ký tài khoản</h2>
+        {error && <p className="error">{error}</p>}
 
-        <form onSubmit={handleRegister} className="space-y-4">
-          <input
-            type="text"
-            placeholder="Họ và tên"
-            className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-400 outline-none"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
+        <form onSubmit={handleRegister}>
+          <div className="input-group">
+            <label>Họ và tên</label>
+            <div className="input-icon">
+              <FaUserAlt className="icon" />
+              <input
+                type="text"
+                placeholder="Nhập họ và tên"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </div>
+          </div>
 
-          <input
-            type="email"
-            placeholder="Email"
-            className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-400 outline-none"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
+          <div className="input-group">
+            <label>Email</label>
+            <div className="input-icon">
+              <FaEnvelope className="icon" />
+              <input
+                type="email"
+                placeholder="Nhập email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+          </div>
 
-          <input
-            type="password"
-            placeholder="Mật khẩu"
-            className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-400 outline-none"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+          <div className="input-group">
+            <label>Mật khẩu</label>
+            <div className="input-icon">
+              <FaLock className="icon" />
+              <input
+                type="password"
+                placeholder="Nhập mật khẩu"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+          </div>
 
-          <input
-            type="password"
-            placeholder="Xác nhận mật khẩu"
-            className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-400 outline-none"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-          />
+          <div className="input-group">
+            <label>Xác nhận mật khẩu</label>
+            <div className="input-icon">
+              <FaLock className="icon" />
+              <input
+                type="password"
+                placeholder="Nhập lại mật khẩu"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
+            </div>
+          </div>
 
-          {error && <p className="text-red-500 text-sm">{error}</p>}
-
-          <button
-            type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
-          >
+          <button type="submit" className="btn-register">
             Đăng ký
           </button>
         </form>
 
-        <p className="text-center text-sm text-gray-600 mt-4">
+        <p className="text-note">
           Đã có tài khoản?{" "}
-          <Link to="/login" className="text-blue-500 hover:underline">
+          <Link to="/login" className="link">
             Đăng nhập ngay
           </Link>
         </p>

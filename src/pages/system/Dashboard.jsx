@@ -5,6 +5,7 @@ import FilterPanel from "../../components/FilterPanel/FilterPanel";
 import DataTable from "../../components/DataTable/DataTable";
 import "./Dashboard.css";
 
+
 const Dashboard = () => {
   return (
     <div className="dashboard-layout">
