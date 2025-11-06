@@ -1,0 +1,148 @@
+.basecrm-root {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: linear-gradient(135deg, #f4f8fb 0%, #fff 100%);
+  min-height: 100vh;
+}
+
+.basecrm-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 30px 7vw 10px 7vw;
+  background: #fff;
+  box-shadow: 0 2px 16px rgba(44,62,80,0.05);
+}
+
+.basecrm-logo {
+  height: 40px;
+}
+
+.basecrm-header nav {
+  display: flex;
+  gap: 32px;
+}
+
+.basecrm-nav-link {
+  text-decoration: none;
+  color: #274197;
+  font-weight: 500;
+  font-size: 1rem;
+  padding: 8px 0;
+  border-bottom: 2px solid transparent;
+  transition: border-color 0.2s;
+}
+
+.basecrm-nav-link:hover {
+  border-bottom: 2px solid #274197;
+}
+
+.basecrm-login-btn {
+  background: #274197;
+  color: #fff !important;
+  padding: 8px 24px;
+  border-radius: 4px;
+  border: none;
+  margin-left: 24px;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.basecrm-login-btn:hover {
+  background: #173076;
+}
+
+.basecrm-main {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 64px;
+  padding: 48px 7vw 0 7vw;
+  flex-wrap: wrap;
+}
+
+.basecrm-info {
+  max-width: 430px;
+  padding-top: 40px;
+}
+
+.basecrm-title {
+  font-size: 2.5rem;
+  color: #274197;
+  margin-bottom: 18px;
+  line-height: 1.2;
+  font-weight: 700;
+}
+
+.basecrm-desc {
+  color: #223042;
+  font-size: 1.15rem;
+  margin-bottom: 32px;
+}
+
+.basecrm-note {
+  font-size: 0.95rem;
+  color: #7586a6;
+  margin-top: 4px;
+}
+
+.basecrm-illustration {
+  min-width: 340px;
+  max-width: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.basecrm-img {
+  width: 100%;
+  max-width: 400px;
+  border-radius: 14px;
+  box-shadow: 0 8px 32px rgba(39,65,151,0.09);
+  border: 1.5px solid #f1f3f7;
+}
+
+.basecrm-benefits {
+  margin: 64px auto 0 auto;
+  max-width: 900px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(39,65,151,0.07);
+  padding: 36px 7vw;
+  text-align: center;
+}
+
+.basecrm-benefits h2 {
+  color: #274197;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 18px;
+}
+
+.basecrm-benefits ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.basecrm-benefits li {
+  font-size: 1.08rem;
+  color: #223042;
+  padding: 8px 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+}
+
+/* Responsive */
+@media (max-width: 990px) {
+  .basecrm-main {
+    flex-direction: column;
+    align-items: center;
+    gap: 34px;
+  }
+  .basecrm-illustration {
+    min-width: unset;
+    max-width: 100%;
+  }
+}
