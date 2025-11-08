@@ -6,8 +6,8 @@ import Header from "../../../components/Header/Header";
 import { useCRM } from "../../../context/CRMContext";
 import AddCustomerModal from "../../../components/modals/AddCustomerModal";
 import AddDealModal from "../../../components/modals/AddDealModal";
-import "./Dashboard.css";
 import { FiSearch, FiChevronRight } from "react-icons/fi";
+import "./Dashboard.css";
 
 const Dashboard = () => {
   const { customers, deals } = useCRM();

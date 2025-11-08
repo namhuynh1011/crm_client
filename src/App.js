@@ -1,9 +1,7 @@
 // src/App.js (khi dùng ProtectedRoute)
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import Login from "./pages/public/Login";
 import Register from "./pages/public/Register";
-import Dashboard from "./pages/system/Dashboard/Dashboard";
 import Deals from "./pages/system/Deals/Deals";
 import Customers from "./pages/system/Customers/Customers";
 import Tasks from "./pages/system/Tasks/Tasks";
