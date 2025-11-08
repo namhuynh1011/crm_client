@@ -1,0 +1,164 @@
+/* src/pages/system/Tasks/Tasks.css */
+.tasks-layout {
+  display: flex;
+  background: #f7f9fc;
+  min-height: 100vh;
+  font-family: "Poppins", sans-serif;
+}
+
+.tasks-main {
+  flex: 1;
+  margin-left: 240px;
+  display: flex;
+  flex-direction: column;
+}
+
+.tasks-container {
+  padding: 30px 50px;
+  flex: 1;
+}
+
+.tasks-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.tasks-header h2 {
+  font-size: 22px;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+.tasks-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.add-task-btn {
+  background: #5b4ce2;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 25px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.add-task-btn:hover {
+  background: #473ad1;
+}
+
+.sort-btn,
+.filter-btn {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.sort-btn:hover,
+.filter-btn:hover {
+  background: #f3f4f6;
+}
+
+.total-tasks {
+  color: #6b7280;
+  margin-bottom: 15px;
+  font-size: 14px;
+}
+
+.tasks-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.tasks-table th {
+  text-align: left;
+  padding: 16px 20px;
+  background: #f9fafb;
+  font-weight: 600;
+  font-size: 13px;
+  color: #374151;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.tasks-table td {
+  padding: 16px 20px;
+  border-bottom: 1px solid #f3f4f6;
+  font-size: 14px;
+  vertical-align: middle;
+}
+
+.checkbox-cell {
+  width: 40px;
+}
+
+.check-icon {
+  font-size: 18px;
+  color: #9ca3af;
+  cursor: pointer;
+}
+
+.check-icon.completed {
+  color: #10b981;
+}
+
+.due-date {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+.due-date.overdue {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.task-description {
+  color: #111827;
+  font-weight: 500;
+}
+
+.overdue-tag {
+  color: #dc2626;
+  font-size: 12px;
+  margin-left: 8px;
+}
+
+.edit-icon {
+  color: #9ca3af;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.edit-icon:hover {
+  color: #6366f1;
+}
+
+.load-more {
+  text-align: center;
+  padding: 24px 0;
+}
+
+.load-more button {
+  background: none;
+  border: none;
+  color: #6366f1;
+  font-weight: 500;
+  cursor: pointer;
+}
