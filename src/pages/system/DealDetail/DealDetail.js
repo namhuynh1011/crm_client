@@ -1,4 +1,3 @@
-// src/pages/system/Deals/DealDetail.jsx
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import Sidebar from "../../../components/Sidebar/Sidebar";

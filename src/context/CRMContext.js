@@ -36,7 +36,6 @@ export const CRMProvider = ({ children }) => {
     },
   ]);
 
-  // ĐÃ KHAI BÁO ĐÚNG: tasks + setTasks
  const [tasks, setTasks] = useState([
     { id: 1, date: "14 Nov 2021", task: "Description goes here", completed: false, overdue: false },
     { id: 2, date: "24 Dec 2021", task: "Web conference agenda", completed: false, overdue: true },
