@@ -24,12 +24,11 @@ function App() {
 
         {/* Dashboard không yêu cầu auth */}
         <Route path="/dashboard" element={
-          <ProtectedRoute requireAuth={false}>
+          <ProtectedRoute requireAuth={true}>
             <Dashboard />
           </ProtectedRoute>
         } />
 
-        {/* Một route được bảo vệ ví dụ */}
         <Route path="/private" element={
           <ProtectedRoute requireAuth={true}>
             {/* component private */}

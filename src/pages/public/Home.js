@@ -1,20 +1,18 @@
 import React from "react";
 import "./Home.css";
-import { Link } from "react-router-dom";
-
+import logo from "../../assets/logo.png";
 const Home = () => {
   return (
     <div className="basecrm-root">
       <header className="basecrm-header">
         <img
-          src="https://static.base.vn/icon/base-logo-full.svg"
+          src={logo}
           alt="CRM Logo"
           className="basecrm-logo"
         />
         <nav>
-          <a href="#" className="basecrm-nav-link">Sản phẩm</a>
-          <a href="#" className="basecrm-nav-link">Bảng giá</a>
-          <a href="#" className="basecrm-nav-link">Tài liệu</a>
+          <a href="#" className="basecrm-nav-link">Hỗ Trợ</a>
+          <a href="#" className="basecrm-nav-link">Tra Cứu</a>
           <a href="/login" className="basecrm-nav-link basecrm-login-btn">Đăng nhập
           </a>
         </nav>
@@ -28,17 +26,9 @@ const Home = () => {
           <p className="basecrm-desc">
             Gia tăng doanh số, tối ưu quy trình bán hàng và chăm sóc khách hàng với giải pháp CRM bảo mật, minh bạch trên nền tảng Blockchain.
           </p>
-          {/* Đã bỏ form đăng ký ở đây */}
           <p className="basecrm-note">Trải nghiệm giải pháp quản lý khách hàng thông minh, an toàn, hiện đại.</p>
         </section>
 
-        {/* <section className="basecrm-illustration">
-          <img
-            src="https://cdn.base.vn/base-crm/screens/base-crm-dashboard.png"
-            alt="CRM Dashboard"
-            className="basecrm-img"
-          />
-        </section> */}
       </main>
 
       <section className="basecrm-benefits">
