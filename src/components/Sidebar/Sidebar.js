@@ -37,6 +37,7 @@ const Sidebar = () => {
   const [avatarInitial, setAvatarInitial] = useState("U");
   const [avatarUrl, setAvatarUrl] = useState(null);
   const [roleLabel, setRoleLabel] = useState("Người dùng");
+  const [roleRaw, setRoleRaw] = useState(""); // store raw role for permission checks
 
   useEffect(() => {
     try {
@@ -65,6 +66,7 @@ const Sidebar = () => {
           setAvatarInitial(formattedName ? formattedName.charAt(0).toUpperCase() : "U");
           setAvatarUrl(user.avatar || null);
           setRoleLabel(titleCaseRole(user.role));
+          setRoleRaw((user.role || "").toString().toLowerCase());
         }
       } catch (e) {
         // fallback: try read cached currentUser from localStorage
@@ -82,6 +84,7 @@ const Sidebar = () => {
             setAvatarInitial(formattedName ? formattedName.charAt(0).toUpperCase() : "U");
             setAvatarUrl(user.avatar || null);
             setRoleLabel(titleCaseRole(user.role));
+            setRoleRaw((user.role || "").toString().toLowerCase());
           }
         } catch {}
       }
@@ -111,6 +114,9 @@ const Sidebar = () => {
   };
 
   const goToProfile = () => navigate("/profile");
+
+  // helper to check admin role (case-insensitive)
+  const isAdmin = () => roleRaw === "admin";
 
   return (
     <aside className={`sidebar ${collapsed ? "collapsed" : ""}`} role="navigation" aria-expanded={!collapsed}>
@@ -143,13 +149,15 @@ const Sidebar = () => {
           <span className="nav-icon" aria-hidden><FaTasks /></span>
           <span className="nav-label">Tasks</span>
         </NavLink>
-        <NavLink to="/empployee" className={({ isActive }) => (isActive ? "nav-item active" : "nav-item")}>
-          <span className="nav-icon" aria-hidden><FaUserFriends /></span>
-          <span className="nav-label">Employee</span>
-        </NavLink>
+
+        {isAdmin() && (
+          <NavLink to="/employee" className={({ isActive }) => (isActive ? "nav-item active" : "nav-item")}>
+            <span className="nav-icon" aria-hidden><FaUserFriends /></span>
+            <span className="nav-label">Employee</span>
+          </NavLink>
+        )}
       </nav>
 
-      {/* Footer: top row (avatar + name/role) ; bottom row (logout) */}
       <div className="sidebar-footer" role="contentinfo">
         <button
           className="footer-top"

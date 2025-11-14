@@ -6,7 +6,7 @@ import Customers from "./pages/system/Customers/Customers";
 import Tasks from "./pages/system/Tasks/Tasks";
 import DealDetail from "./pages/system/DealDetail/DealDetail";
 import { CRMProvider } from "./context/CRMContext";
-import { Login, Dashboard, Home, ProfilePage } from "./pages";
+import { Login, Dashboard, Home, ProfilePage, EmployeePage } from "./pages";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
@@ -29,6 +29,11 @@ function App() {
         <Route path="/dashboard" element={
           <ProtectedRoute requireAuth={true}>
             <Dashboard />
+          </ProtectedRoute>
+        } />
+        <Route path="/employee" element={
+          <ProtectedRoute requireAuth={true}>
+            <EmployeePage />
           </ProtectedRoute>
         } />
         

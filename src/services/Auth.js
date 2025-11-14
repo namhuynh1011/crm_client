@@ -9,7 +9,6 @@ function parseJwt(token) {
   if (!token) return null;
   try {
     const payload = token.split(".")[1];
-    // atob may produce binary string; decodeURIComponent handles non-ASCII
     const jsonPayload = decodeURIComponent(
       atob(payload)
         .split("")
@@ -104,7 +103,7 @@ async function login(credentials) {
     const networkError = !error.response;
     if (networkError) {
       console.error("Network/CORS or server unreachable:", error);
-      throw { message: "Network or server error: không nhận được phản hồi từ server.", detail: error.message };
+      throw { message: "Vui Lòng Kiểm tra lại" };
     } else {
       console.error("Login error response:", {
         status: error.response.status,
@@ -259,4 +258,5 @@ export {
   parseJwt,
   updateProfile,
   changePassword,
+  updateTokens,
 };
