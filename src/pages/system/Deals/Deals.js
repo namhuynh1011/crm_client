@@ -91,7 +91,7 @@ const Deals = () => {
                               onError={(e) => e.target.src = "https://via.placeholder.com/36"}
                             />
                             <div className="deal-name-text">
-                              <Link to={`/system/deals/${deal.id}`} className="deal-link">
+                              <Link to={`/deals/${deal.id}`} className="deal-link">
                                 {shortName}
                               </Link>
                               <div className="tooltip">{deal.name}</div>

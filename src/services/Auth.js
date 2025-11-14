@@ -1,7 +1,6 @@
 import axios from "axios";
 
-const API_URL = process.env.REACT_APP_API_URL;
-const LOGIN_PATH = "/auth/login";
+const AUTH_API_URL = `${process.env.REACT_APP_API_URL}/auth`;
 const ACCESS_TOKEN_KEY = "accessToken";
 const REFRESH_TOKEN_KEY = "refreshToken";
 const CURRENT_USER_KEY = "currentUser";
@@ -32,24 +31,6 @@ function getAccessToken() {
 }
 
 /**
- * Lấy user (payload JWT) từ token đã lưu (hoặc null)
- */
-function getCurrentUser() {
-  const token = getAccessToken();
-  const payload = parseJwt(token);
-  if (!payload) return null;
-  // payload chứa id, email, role, iat, exp theo token bạn cung cấp
-  return {
-    id: payload.id,
-    email: payload.email,
-    role: payload.role,
-    iat: payload.iat,
-    exp: payload.exp,
-    rawPayload: payload,
-  };
-}
-
-/**
  * Kiểm tra token đã hết hạn chưa
  * exp trong JWT là seconds since epoch
  */
@@ -61,10 +42,16 @@ function isTokenExpired(token) {
 }
 
 /**
- * Authorization header helper
+ * Authorization header helper (not used by axiosInstance interceptor but kept for convenience)
  */
+function authHeader() {
+  const token = getAccessToken();
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
+/* axios instance pointed at /auth base */
 const axiosInstance = axios.create({
-  baseURL: API_URL,
+  baseURL: AUTH_API_URL,
   headers: {
     "Content-Type": "application/json",
   },
@@ -86,27 +73,39 @@ axiosInstance.interceptors.request.use(
 
 async function login(credentials) {
   try {
-    const res = await axios.post(`${API_URL}${LOGIN_PATH}`, credentials);
+    const res = await axios.post(`${AUTH_API_URL}/login`, credentials);
     const data = res.data;
 
     if (data?.err === 0 && data?.token) {
       localStorage.setItem(ACCESS_TOKEN_KEY, data.token);
-      // parse và lưu user nếu muốn...
+      // optionally store currentUser if returned
+      if (data.user) {
+        localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(data.user));
+      } else {
+        // try parse token for basic info
+        const payload = parseJwt(data.token);
+        if (payload) {
+          const u = {
+            id: payload.id,
+            fullName: payload.fullName || payload.name || "",
+            email: payload.email,
+            role: payload.role,
+            avatar: payload.avatar || "",
+          };
+          localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(u));
+        }
+      }
       return { raw: data };
     } else {
-      // API trả lỗi với body (4xx nhưng axios may still resolve? usually reject)
       const message = data?.msg || "Login failed";
       throw { message, raw: data };
     }
   } catch (error) {
-    // Thông tin chi tiết để debug
     const networkError = !error.response;
     if (networkError) {
-      // Không có response từ server (CORS, network, server down)
       console.error("Network/CORS or server unreachable:", error);
       throw { message: "Network or server error: không nhận được phản hồi từ server.", detail: error.message };
     } else {
-      // Server trả lỗi với status & data
       console.error("Login error response:", {
         status: error.response.status,
         data: error.response.data,
@@ -119,18 +118,10 @@ async function login(credentials) {
   }
 }
 
-
 function logout() {
   localStorage.removeItem(ACCESS_TOKEN_KEY);
   localStorage.removeItem(CURRENT_USER_KEY);
   // Nếu backend cần revoke token, gọi API revoke tại đây
-}
-
-
-
-function authHeader() {
-  const token = getAccessToken();
-  return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
 function updateTokens({ accessToken, refreshToken }) {
@@ -141,10 +132,119 @@ function updateTokens({ accessToken, refreshToken }) {
     localStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
   }
 }
+
 function getTokenExpiryDate(token) {
   const payload = parseJwt(token);
   if (!payload || !payload.exp) return null;
   return new Date(payload.exp * 1000);
+}
+
+/**
+ * Update profile API (uses axiosInstance baseURL => /auth)
+ * Backend route: PUT /auth/update/profile/
+ */
+async function updateProfile(payload) {
+  try {
+    const res = await axiosInstance.put("/update/profile/", payload);
+    return res.data;
+  } catch (err) {
+    if (err?.response?.data) throw err.response.data;
+    throw err;
+  }
+}
+
+/**
+ * Change password API
+ * Backend route: PUT /auth/change-password/
+ */
+async function changePassword(payload) {
+  try {
+    const res = await axiosInstance.put("/change-password/", payload);
+    return res.data;
+  } catch (err) {
+    if (err?.response?.data) throw err.response.data;
+    throw err;
+  }
+}
+
+async function getCurrentUser() {
+  const token = getAccessToken();
+
+  // If no token, try to return cached currentUser from localStorage (if present)
+  if (!token) {
+    try {
+      const cached = localStorage.getItem(CURRENT_USER_KEY);
+      return cached ? JSON.parse(cached) : null;
+    } catch {
+      return null;
+    }
+  }
+
+  try {
+    // call backend endpoint that returns user data: GET /auth/me
+    const res = await axiosInstance.get("/me");
+    const data = res.data;
+
+    // expect backend to return { err:0, msg:'OK', data: userObj }
+    if (data && (data.err === 0 || data.err === undefined)) {
+      const userData = data.data || data.user || data; // tolerate shapes
+      if (userData) {
+        try {
+          localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(userData));
+        } catch (e) {
+          // ignore localStorage write errors
+        }
+        return userData;
+      }
+    }
+
+    // fallback: try parse token payload or localStorage
+    try {
+      const cached = localStorage.getItem(CURRENT_USER_KEY);
+      if (cached) return JSON.parse(cached);
+    } catch {}
+
+    const payload = parseJwt(token);
+    if (payload) {
+      return {
+        id: payload.id,
+        fullName: payload.fullName || payload.name || "",
+        email: payload.email,
+        role: payload.role,
+        avatar: payload.avatar || "",
+        rawPayload: payload,
+      };
+    }
+    return null;
+  } catch (err) {
+    console.error("getCurrentUser error:", err);
+    // if unauthorized, remove tokens and cached user
+    if (err?.response?.status === 401 || err?.response?.status === 403) {
+      try {
+        logout();
+      } catch {}
+      return null;
+    }
+
+    // otherwise, try to return cached user or token-payload fallback
+    try {
+      const cached = localStorage.getItem(CURRENT_USER_KEY);
+      if (cached) return JSON.parse(cached);
+    } catch {}
+
+    const payload = parseJwt(token);
+    if (payload) {
+      return {
+        id: payload.id,
+        fullName: payload.fullName || payload.name || "",
+        email: payload.email,
+        role: payload.role,
+        avatar: payload.avatar || "",
+        rawPayload: payload,
+      };
+    }
+    return null;
+  }
 }
 
 export {
@@ -157,4 +257,6 @@ export {
   authHeader,
   getTokenExpiryDate,
   parseJwt,
+  updateProfile,
+  changePassword,
 };

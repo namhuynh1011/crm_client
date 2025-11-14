@@ -1,0 +1,178 @@
+/* Ensure these variables are defined in your global CSS (index.css or :root)
+   but we also provide safe fallbacks here for local testing:
+*/
+:root {
+  --header-height: 72px;
+  --sidebar-width: 240px;
+  --sidebar-collapsed-width: 72px;
+  --main-max-width: 1100px;
+  --page-gap: 24px;
+}
+
+/* Base layout */
+.app-layout {
+  min-height: 100vh;
+  background: var(--bg-color, #f5f8fb);
+}
+
+/* Header is fixed; Sidebar is fixed under header. Main content must account for both. */
+.main-with-header {
+  margin-top: var(--header-height); /* leave room for fixed header */
+  padding: var(--page-gap);
+  padding-left: calc(var(--sidebar-width) + var(--page-gap)); /* align with other pages */
+  box-sizing: border-box;
+  transition: padding-left 200ms ease;
+  min-height: calc(100vh - var(--header-height));
+  width: 100%;
+}
+
+/* When sidebar collapsed a class on body toggles the padding-left */
+body.sidebar-collapsed .main-with-header {
+  padding-left: calc(var(--sidebar-collapsed-width) + var(--page-gap));
+}
+
+/* center inner content */
+.profile-page {
+  max-width: var(--main-max-width);
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+/* page title */
+.profile-title {
+  margin: 0 0 18px 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+/* layout two columns */
+.profile-grid {
+  display: grid;
+  grid-template-columns: 1fr 420px;
+  gap: 20px;
+  align-items: start;
+}
+
+/* card common */
+.profile-card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 18px;
+  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.06);
+}
+
+/* avatar area */
+.avatar-row {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.avatar-preview {
+  width: 128px;
+  height: 128px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.avatar-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* controls */
+.avatar-controls .btn {
+  display: inline-block;
+  padding: 8px 12px;
+  background: #eef2ff;
+  color: #4f46e5;
+  border-radius: 8px;
+  cursor: pointer;
+  border: none;
+}
+.btn-secondary { background: #eef2ff; color: #4f46e5; }
+.btn-primary {
+  background: #4f46e5;
+  color: white;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* forms */
+.profile-form .form-row,
+.password-form .form-row {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 12px;
+}
+.profile-form .form-row label,
+.password-form .form-row label {
+  font-size: 13px;
+  color: #374151;
+  margin-bottom: 6px;
+}
+.profile-form input[type="text"],
+.profile-form input[type="email"],
+.password-form input[type="password"] {
+  padding: 10px 12px;
+  border: 1px solid #e6e9ef;
+  border-radius: 8px;
+  outline: none;
+  font-size: 14px;
+}
+.profile-form input[readonly] {
+  background: #f8fafc;
+  color: #6b7280;
+}
+
+/* form actions */
+.form-actions {
+  margin-top: 8px;
+  display: flex;
+  gap: 8px;
+}
+
+/* messages */
+.profile-message {
+  margin-top: 14px;
+  padding: 10px 12px;
+  border-radius: 8px;
+}
+.profile-message.success {
+  background: #ecfdf5;
+  color: #065f46;
+}
+.profile-message.error {
+  background: #ffebe8;
+  color: #9b1b1b;
+}
+
+/* small note */
+.small-note {
+  font-size: 12px;
+  color: #6b7280;
+  margin-top: 8px;
+}
+
+/* responsive */
+@media (max-width: 980px) {
+  .profile-grid {
+    grid-template-columns: 1fr;
+  }
+  .avatar-preview {
+    width: 96px;
+    height: 96px;
+  }
+  .main-with-header {
+    padding-left: calc(var(--sidebar-collapsed-width) + 16px);
+    padding-right: 16px;
+  }
+}

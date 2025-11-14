@@ -3,45 +3,7 @@ import { Bell } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "./Header.css";
 import logo from "../../assets/logo.png";
-/**
- * Giải mã payload JWT (browser safe). Trả về object payload hoặc null.
- */
-function parseJwt(token) {
-  if (!token) return null;
-  try {
-    const payload = token.split(".")[1];
-    const jsonPayload = decodeURIComponent(
-      atob(payload)
-        .split("")
-        .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
-        .join("")
-    );
-    return JSON.parse(jsonPayload);
-  } catch (e) {
-    // nếu parse lỗi thì trả null
-    return null;
-  }
-}
-
-/**
- * Tạo tên hiển thị từ payload JWT
- */
-function displayNameFromPayload(payload) {
-  if (!payload) return "Người dùng";
-  // ưu tiên các trường tên phổ biến
-  if (payload.name) return payload.name;
-  if (payload.fullName) return payload.fullName;
-  if (payload.username) return payload.username;
-  if (payload.email) {
-    const local = payload.email.split("@")[0];
-    return local
-      .replace(/[._]/g, " ")
-      .split(" ")
-      .map((s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : ""))
-      .join(" ");
-  }
-  return payload.id ? String(payload.id).slice(0, 8) : "Người dùng";
-}
+import { getCurrentUser } from "../../services/Auth"; // dùng getCurrentUser thay vì đọc token
 
 const capitalize = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : "");
 
@@ -69,9 +31,25 @@ const deriveTitleFromPath = (pathname) => {
   return "CRM";
 };
 
+function nameFromUser(user) {
+  if (!user) return "Người dùng";
+  if (user.fullName) return user.fullName;
+  if (user.name) return user.name;
+  if (user.email) {
+    const local = user.email.split("@")[0];
+    return local
+      .replace(/[._]/g, " ")
+      .split(" ")
+      .map((s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : ""))
+      .join(" ");
+  }
+  return user.id ? String(user.id).slice(0, 8) : "Người dùng";
+}
+
 const Header = () => {
   const [pageTitle, setPageTitle] = useState("CRM");
   const [displayName, setDisplayName] = useState("Người dùng");
+  const [avatarUrl, setAvatarUrl] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -81,23 +59,50 @@ const Header = () => {
     document.title = `${title} - CRM`;
   }, [location.pathname]);
 
+  // Lấy user dùng service getCurrentUser() (thay vì parse token trực tiếp)
   useEffect(() => {
-    // đọc token từ localStorage (hỗ trợ nhiều key tên khác nhau)
-    const token =
-      localStorage.getItem("accessToken") ||
-      localStorage.getItem("access_token") ||
-      localStorage.getItem("token") ||
-      null;
+    let mounted = true;
+    const loadUser = async () => {
+      try {
+        const user = await getCurrentUser();
+        if (!mounted) return;
+        if (user) {
+          const name = nameFromUser(user);
+          setDisplayName(name);
+          setAvatarUrl(user.avatar || null);
+        }
+      } catch (err) {
+        // nếu lỗi, giữ giá trị mặc định; có thể log để debug
+        console.warn("Header: getCurrentUser error", err);
+      }
+    };
+    loadUser();
 
-    const payload = parseJwt(token);
-    const name = displayNameFromPayload(payload);
-    setDisplayName(name);
+    // lắng nghe event tuỳ ý khi profile update (ProfilePage dispatch userUpdated)
+    const onUserUpdated = async () => {
+      try {
+        const user = await getCurrentUser();
+        if (!mounted) return;
+        if (user) {
+          setDisplayName(nameFromUser(user));
+          setAvatarUrl(user.avatar || null);
+        }
+      } catch (e) {
+        console.warn("Header: userUpdated handler error", e);
+      }
+    };
+    window.addEventListener("userUpdated", onUserUpdated);
+
+    return () => {
+      mounted = false;
+      window.removeEventListener("userUpdated", onUserUpdated);
+    };
   }, []);
 
   return (
     <header className="header">
       <div className="logo-box" aria-hidden>
-        <span className="logo-icon">🌿</span>
+        <img src={logo} alt="Logo" style={{ width: 28, height: 28 }} />
       </div>
 
       <div className="header-inner">
@@ -122,10 +127,12 @@ const Header = () => {
           {/* tên hiển thị giữa notification và avatar */}
           <div className="user-name">{displayName}</div>
 
-          <div
-            className="user-avatar"
-          >
-            {displayName ? displayName.charAt(0).toUpperCase() : "N"}
+          <div className="user-avatar" title={displayName} onClick={() => navigate("/profile")}>
+            {avatarUrl ? (
+              <img src={avatarUrl} alt={displayName} style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "50%" }} />
+            ) : (
+              displayName ? displayName.charAt(0).toUpperCase() : "N"
+            )}
           </div>
         </div>
       </div>

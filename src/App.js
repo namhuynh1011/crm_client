@@ -6,7 +6,7 @@ import Customers from "./pages/system/Customers/Customers";
 import Tasks from "./pages/system/Tasks/Tasks";
 import DealDetail from "./pages/system/DealDetail/DealDetail";
 import { CRMProvider } from "./context/CRMContext";
-import { Login, Dashboard, Home } from "./pages";
+import { Login, Dashboard, Home, ProfilePage } from "./pages";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
@@ -17,23 +17,21 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/system/deals" element={<Deals />} />
-        <Route path="/system/deals/:id" element={<DealDetail />} />
-        <Route path="/system/customers" element={<Customers />} />
-        <Route path="/system/tasks" element={<Tasks />} />
-
-        {/* Dashboard không yêu cầu auth */}
+        <Route path="/deals" element={<Deals />} />
+        <Route path="/deals/:id" element={<DealDetail />} />
+        <Route path="/customers" element={<Customers />} />
+        <Route path="/tasks" element={<Tasks />} />
+        <Route path='/profile' element={
+          <ProtectedRoute requireAuth={true}>
+            <ProfilePage />
+          </ProtectedRoute>
+        } />
         <Route path="/dashboard" element={
           <ProtectedRoute requireAuth={true}>
             <Dashboard />
           </ProtectedRoute>
         } />
-
-        <Route path="/private" element={
-          <ProtectedRoute requireAuth={true}>
-            {/* component private */}
-          </ProtectedRoute>
-        } />
+        
 
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
